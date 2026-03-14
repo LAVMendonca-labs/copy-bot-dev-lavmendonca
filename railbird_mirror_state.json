@@ -1,0 +1,554 @@
+{
+  "copy_name": "Railbird mirror",
+  "wallet_to_follow": "0x906f2454a777600aea6c506247566decef82371a",
+  "cash_usdc": 67.1,
+  "open_exposure_usdc": 32.9,
+  "equity_usdc": 100.0,
+  "realized_pnl_usdc": 0.0,
+  "positions": [
+    {
+      "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+      "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+      "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+      "outcome": "No",
+      "shares": 29.761905,
+      "avg_price": 0.84,
+      "mark_price": 0.84,
+      "market_value": 25.0,
+      "cost_basis": 25.0
+    },
+    {
+      "market_id": "0x5d80ecf647b35e7f8acb605375cda147151f5134c5db052ff4c82d82879eef42",
+      "asset_id": "57347171030143804642825546972156715915196993843337777176000329575305214235895",
+      "question": "Will the highest temperature in Seoul be 8°C on March 14?",
+      "outcome": "No",
+      "shares": 9.875,
+      "avg_price": 0.8,
+      "mark_price": 0.8,
+      "market_value": 7.9,
+      "cost_basis": 7.9
+    }
+  ],
+  "history": [
+    {
+      "trade": {
+        "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+        "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+        "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.84,
+        "market_price": 0.84,
+        "source_usdc_size": 3.822,
+        "timestamp": "1773369423",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": true,
+        "action": "BUY",
+        "reason": "executed",
+        "requested_usdc": 3.822,
+        "executed_usdc": 3.822,
+        "execution_price": 0.84,
+        "shares": 4.55,
+        "total_open_exposure": 3.822,
+        "market_open_exposure": 3.822
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xfa0ba502227f87a80f7e4e2a68a9fa1aefa5a58eac645f3e86c28e0cb561156c",
+        "asset_id": "37124480672497660385259078886633065863218078181732120822572004934663403533614",
+        "question": "Will the highest temperature in Toronto be 4°C on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.78,
+        "market_price": 0.81,
+        "source_usdc_size": 11.7,
+        "timestamp": "1773369821",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.81,
+        "shares": 0.0,
+        "total_open_exposure": 3.822,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+        "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+        "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.86,
+        "market_price": 0.84,
+        "source_usdc_size": 10.32,
+        "timestamp": "1773369897",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": true,
+        "action": "BUY",
+        "reason": "executed",
+        "requested_usdc": 10.32,
+        "executed_usdc": 10.32,
+        "execution_price": 0.84,
+        "shares": 12.285714,
+        "total_open_exposure": 14.142,
+        "market_open_exposure": 14.142
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x556fe819f448bc73aeab4d4b2aca16c50ced2ba19f63cc7624b80925035e4aea",
+        "asset_id": "12641723873760014324393349064328409529705814766618434204092993036981568449709",
+        "question": "Will the highest temperature in Ankara be 13°C on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.7,
+        "market_price": 0.75,
+        "source_usdc_size": 7.7,
+        "timestamp": "1773370021",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.75,
+        "shares": 0.0,
+        "total_open_exposure": 14.142,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x3f1c3776281e517a0c9cad977d5b491040416470a7baef9f83e4508e52753a0e",
+        "asset_id": "58746930047112303594360542074341664185767217805055526136425796133647415689914",
+        "question": "Will the highest temperature in Chicago be between 44-45°F on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.61,
+        "market_price": 0.71,
+        "source_usdc_size": 6.1,
+        "timestamp": "1773370223",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.71,
+        "shares": 0.0,
+        "total_open_exposure": 14.142,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+        "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+        "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.86,
+        "market_price": 0.84,
+        "source_usdc_size": 9.46,
+        "timestamp": "1773370559",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": true,
+        "action": "BUY",
+        "reason": "executed",
+        "requested_usdc": 9.46,
+        "executed_usdc": 9.46,
+        "execution_price": 0.84,
+        "shares": 11.261905,
+        "total_open_exposure": 23.602,
+        "market_open_exposure": 23.602
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+        "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+        "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.88,
+        "market_price": 0.84,
+        "source_usdc_size": 5.28,
+        "timestamp": "1773370933",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": true,
+        "action": "BUY",
+        "reason": "executed",
+        "requested_usdc": 5.28,
+        "executed_usdc": 1.398,
+        "execution_price": 0.84,
+        "shares": 1.664286,
+        "total_open_exposure": 25.0,
+        "market_open_exposure": 25.0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x3f1c3776281e517a0c9cad977d5b491040416470a7baef9f83e4508e52753a0e",
+        "asset_id": "58746930047112303594360542074341664185767217805055526136425796133647415689914",
+        "question": "Will the highest temperature in Chicago be between 44-45°F on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.64,
+        "market_price": 0.71,
+        "source_usdc_size": 7.68,
+        "timestamp": "1773370937",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.71,
+        "shares": 0.0,
+        "total_open_exposure": 25.0,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x556fe819f448bc73aeab4d4b2aca16c50ced2ba19f63cc7624b80925035e4aea",
+        "asset_id": "12641723873760014324393349064328409529705814766618434204092993036981568449709",
+        "question": "Will the highest temperature in Ankara be 13°C on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.72,
+        "market_price": 0.75,
+        "source_usdc_size": 7.2,
+        "timestamp": "1773370985",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.75,
+        "shares": 0.0,
+        "total_open_exposure": 25.0,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x5d80ecf647b35e7f8acb605375cda147151f5134c5db052ff4c82d82879eef42",
+        "asset_id": "57347171030143804642825546972156715915196993843337777176000329575305214235895",
+        "question": "Will the highest temperature in Seoul be 8°C on March 14?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.79,
+        "market_price": 0.8,
+        "source_usdc_size": 7.9,
+        "timestamp": "1773370989",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": true,
+        "action": "BUY",
+        "reason": "executed",
+        "requested_usdc": 7.9,
+        "executed_usdc": 7.9,
+        "execution_price": 0.8,
+        "shares": 9.875,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 7.9
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+        "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+        "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.9,
+        "market_price": 0.84,
+        "source_usdc_size": 13.5,
+        "timestamp": "1773371041",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "max_per_market_reached",
+        "requested_usdc": 13.5,
+        "executed_usdc": 0.0,
+        "execution_price": 0.84,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 25.0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x556fe819f448bc73aeab4d4b2aca16c50ced2ba19f63cc7624b80925035e4aea",
+        "asset_id": "12641723873760014324393349064328409529705814766618434204092993036981568449709",
+        "question": "Will the highest temperature in Ankara be 13°C on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.7,
+        "market_price": 0.75,
+        "source_usdc_size": 7.0,
+        "timestamp": "1773371191",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.75,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x580b904495dc7af3cbcfad2d77ca3d77eac1f876488fb1a7c84d6d3a453f64a4",
+        "asset_id": "53830744316965819171148711683705160377384719202991127523341682589854981609360",
+        "question": "Will the highest temperature in New York City be 50°F or higher on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.922,
+        "market_price": 0.929,
+        "source_usdc_size": 10.142,
+        "timestamp": "1773371517",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "price_out_of_range",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.929,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x3f1c3776281e517a0c9cad977d5b491040416470a7baef9f83e4508e52753a0e",
+        "asset_id": "58746930047112303594360542074341664185767217805055526136425796133647415689914",
+        "question": "Will the highest temperature in Chicago be between 44-45°F on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.64,
+        "market_price": 0.71,
+        "source_usdc_size": 3.2,
+        "timestamp": "1773371551",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.71,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x3f1c3776281e517a0c9cad977d5b491040416470a7baef9f83e4508e52753a0e",
+        "asset_id": "58746930047112303594360542074341664185767217805055526136425796133647415689914",
+        "question": "Will the highest temperature in Chicago be between 44-45°F on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.66,
+        "market_price": 0.71,
+        "source_usdc_size": 0.9042,
+        "timestamp": "1773371617",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.71,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x570983f97208577acc0b0473b538fe6061f8a3cc159d1de5a63382e8233704c6",
+        "asset_id": "52951484171901963744632915509806437990542941124611650786879246488725017607413",
+        "question": "Will the highest temperature in Seoul be 7°C on March 14?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.94,
+        "market_price": 0.96,
+        "source_usdc_size": 14.1,
+        "timestamp": "1773371643",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "price_out_of_range",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.96,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xc28bdf0e87c4435449bafb4bd8f1d6a65904a4efa1a768d0a32f22e8ae851035",
+        "asset_id": "6136693651577058578392467122271743928592184455226796113236732133742402139738",
+        "question": "Will the highest temperature in Chicago be 43°F or below on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.8100001216000438,
+        "market_price": 0.84,
+        "source_usdc_size": 4.263157,
+        "timestamp": "1773372037",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.84,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 25.0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0x3f1c3776281e517a0c9cad977d5b491040416470a7baef9f83e4508e52753a0e",
+        "asset_id": "58746930047112303594360542074341664185767217805055526136425796133647415689914",
+        "question": "Will the highest temperature in Chicago be between 44-45°F on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.68,
+        "market_price": 0.71,
+        "source_usdc_size": 6.6232,
+        "timestamp": "1773372703",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "slippage_too_high",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.71,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xe742c7b65611864a1a7cc130c1494a8add4538fcc451db2df70bce32eee6e053",
+        "asset_id": "12148717030053345638707821923467284290017190083608143265125633957044736580182",
+        "question": "Will the highest temperature in Ankara be 10°C on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.991,
+        "market_price": 0.997,
+        "source_usdc_size": 9.91,
+        "timestamp": "1773372719",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "price_out_of_range",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.997,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    },
+    {
+      "trade": {
+        "market_id": "0xe742c7b65611864a1a7cc130c1494a8add4538fcc451db2df70bce32eee6e053",
+        "asset_id": "12148717030053345638707821923467284290017190083608143265125633957044736580182",
+        "question": "Will the highest temperature in Ankara be 10°C on March 13?",
+        "outcome": "No",
+        "action": "BUY",
+        "source_price": 0.992,
+        "market_price": 0.997,
+        "source_usdc_size": 13.888,
+        "timestamp": "1773372735",
+        "source_position_before_shares": null,
+        "source_position_after_shares": null
+      },
+      "decision": {
+        "accepted": false,
+        "action": "BUY",
+        "reason": "price_out_of_range",
+        "requested_usdc": 0.0,
+        "executed_usdc": 0.0,
+        "execution_price": 0.997,
+        "shares": 0.0,
+        "total_open_exposure": 32.9,
+        "market_open_exposure": 0
+      }
+    }
+  ]
+}
