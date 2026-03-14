@@ -1,0 +1,26 @@
+[
+  {
+    "market_id": "market-1",
+    "asset_id": "asset-1",
+    "question": "Will event A happen before date B?",
+    "outcome": "YES",
+    "action": "BUY",
+    "source_price": 0.42,
+    "market_price": 0.43,
+    "source_usdc_size": 150.0,
+    "timestamp": "2026-03-13T18:00:00Z"
+  },
+  {
+    "market_id": "market-1",
+    "asset_id": "asset-1",
+    "question": "Will event A happen before date B?",
+    "outcome": "YES",
+    "action": "SELL",
+    "source_price": 0.51,
+    "market_price": 0.50,
+    "source_usdc_size": 75.0,
+    "timestamp": "2026-03-13T18:10:00Z",
+    "source_position_before_shares": 300.0,
+    "source_position_after_shares": 150.0
+  }
+]

@@ -1,4 +1,4 @@
-# Polymarket Copy Bot Dev
+# Copy Bot Dev Lavmendonca
 
 Bot local de `paper copy trading` para wallets públicas da Polymarket.
 
@@ -38,6 +38,7 @@ copy_bot_dev/
   core.py
   live.py
   live_report.py
+example_scenario.json
 run_copy_bot_dev.py
 run_copy_bot_live.py
 start-copy-bot-live.ps1
@@ -49,13 +50,15 @@ stop-copy-bot-live.ps1
 Esse modo processa um cenário de trades e imprime o estado final em JSON.
 
 ```powershell
-python .\run_copy_bot_dev.py --copy-name "Railbird paper" --wallet 0x906f2454a777600aea6c506247566decef82371a
+python .\run_copy_bot_dev.py --copy-name "Weather paper" --wallet 0x...
 ```
 
 ### Exemplo com filtros
 
 ```powershell
 python .\run_copy_bot_dev.py `
+  --copy-name "Teste conservador" `
+  --wallet 0x... `
   --mode fixed_usdc `
   --fixed-amount 10 `
   --slippage-pct 3 `
@@ -70,7 +73,7 @@ python .\run_copy_bot_dev.py `
 
 ```powershell
 python .\run_copy_bot_dev.py `
-  --scenario .\railbird_recent_scenario.json `
+  --scenario .\example_scenario.json `
   --json-out .\state.json
 ```
 
@@ -117,6 +120,7 @@ python .\run_copy_bot_live.py `
    - `Max total`
    - `Max per market`
    - `Bankroll`
+   - `Min trade`
 3. Salve.
 4. O acompanhamento começa dali para frente. O bot não deve copiar o backlog antigo da wallet recém-cadastrada.
 
@@ -126,13 +130,13 @@ python .\run_copy_bot_live.py `
 
 Nome interno da configuração.
 
-Use algo que identifique rapidamente a estratégia ou a wallet.
+Use algo que identifique rapidamente a estratégia ou a forma de acompanhamento.
 
 Exemplos:
 
-- `Railbird Weather`
-- `IBOV200K teste`
-- `Sports conservador`
+- `Weather teste 01`
+- `Política conservador`
+- `Crypto agressivo`
 
 ### Wallet to follow
 
