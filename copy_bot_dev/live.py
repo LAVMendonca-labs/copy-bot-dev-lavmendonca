@@ -261,6 +261,7 @@ class CopyLiveManager:
         self.config = config
         self.reports_dir = Path(config.reports_dir)
         self.reports_dir.mkdir(parents=True, exist_ok=True)
+        self.heartbeat_path = self.reports_dir / "copy_live_heartbeat.jsonl"
         self.lock = threading.RLock()
         self.condition = threading.Condition(self.lock)
         self.started_at = now_iso()
@@ -272,6 +273,7 @@ class CopyLiveManager:
         self.copies: dict[str, CopyRuntime] = {}
         self._restore_state()
         self.latest_state = self.compose_state()
+        self._append_heartbeat("startup")
 
     def start_background_loop(self) -> threading.Thread:
         worker = threading.Thread(target=self._run_loop, name="copy-bot-live-loop", daemon=True)
@@ -395,6 +397,7 @@ class CopyLiveManager:
                 self.version += 1
                 self.latest_state = self.compose_state()
                 self._persist_state()
+                self._append_heartbeat("cycle")
                 self.condition.notify_all()
             time.sleep(max(3, self.config.refresh_seconds))
 
@@ -660,6 +663,42 @@ class CopyLiveManager:
         }
         path = self.reports_dir / "copy_live_state.json"
         path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    def _append_heartbeat(self, event_type: str) -> None:
+        payload = {
+            "event": event_type,
+            "logged_at": now_iso(),
+            "started_at": self.started_at,
+            "last_update_at": self.last_update_at,
+            "cycle_count": self.cycle_count,
+            "version": self.version,
+            "refresh_seconds": self.config.refresh_seconds,
+            "last_error": self.last_error,
+            "summary": self.latest_state.get("summary", {}),
+            "copies": [
+                {
+                    "copy_id": item.get("copy_id"),
+                    "copy_name": item.get("copy_name"),
+                    "active": item.get("active"),
+                    "bankroll_usdc": item.get("bankroll_usdc"),
+                    "cash_usdc": item.get("cash_usdc"),
+                    "open_exposure_usdc": item.get("open_exposure_usdc"),
+                    "equity_usdc": item.get("equity_usdc"),
+                    "realized_pnl_usdc": item.get("realized_pnl_usdc"),
+                    "pnl_usdc": item.get("pnl_usdc"),
+                    "positions_open": item.get("positions_open"),
+                    "signals_processed": item.get("signals_processed"),
+                    "signals_executed": item.get("signals_executed"),
+                    "copied_volume_usdc": item.get("copied_volume_usdc"),
+                    "last_poll_at": item.get("last_poll_at"),
+                    "last_source_trade_at": item.get("last_source_trade_at"),
+                    "last_error": item.get("last_error"),
+                }
+                for item in self.latest_state.get("copies", [])
+            ],
+        }
+        with self.heartbeat_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
     def _restore_state(self) -> None:
         path = self.reports_dir / "copy_live_state.json"
