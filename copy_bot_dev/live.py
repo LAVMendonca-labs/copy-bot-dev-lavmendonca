@@ -6,7 +6,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -66,6 +66,65 @@ def sanitize_text(value: Any) -> str:
     return text
 
 
+def build_market_id(item: dict[str, Any], asset_id: str = "") -> str:
+    for key in ("conditionId", "condition_id", "marketSlug", "slug", "market"):
+        value = sanitize_text(item.get(key)).strip().lower()
+        if value:
+            return value
+
+    title = sanitize_text(item.get("title") or item.get("question")).strip().lower()
+    if title:
+        return f"title:{title}"
+    if asset_id:
+        return f"asset:{asset_id}"
+    return "unknown-market"
+
+
+def parse_iso_date(value: str) -> date | None:
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    try:
+        return date.fromisoformat(raw[:10])
+    except ValueError:
+        return None
+
+
+def parse_question_end_date(question: str) -> date | None:
+    text = sanitize_text(question).strip()
+    if not text:
+        return None
+
+    lowered = text.lower()
+    patterns = [
+        (" on ", "%B %d"),
+        (" by ", "%B %d"),
+    ]
+    for marker, fmt in patterns:
+        if marker not in lowered:
+            continue
+        suffix = text[lowered.rfind(marker) + len(marker) :].strip(" ?.")
+        parts = suffix.split()
+        if len(parts) >= 3 and parts[2].isdigit():
+            candidate = " ".join(parts[:3])
+            try:
+                return datetime.strptime(candidate, "%B %d %Y").date()
+            except ValueError:
+                pass
+        if len(parts) >= 2:
+            candidate = " ".join(parts[:2])
+            try:
+                parsed = datetime.strptime(candidate, fmt).date()
+                return parsed.replace(year=datetime.now(timezone.utc).year)
+            except ValueError:
+                pass
+    return None
+
+
+def is_terminal_price(price: float) -> bool:
+    return price >= 0.99 or price <= 0.01
+
+
 def request_json(url: str) -> Any:
     request = urllib.request.Request(
         url,
@@ -104,6 +163,8 @@ class SourceHolding:
     outcome: str
     shares: float
     price: float
+    end_date: str = ""
+    redeemable: bool = False
 
 
 @dataclass(slots=True)
@@ -212,13 +273,14 @@ def build_trade_key(item: dict[str, Any]) -> str:
 
 
 def build_source_trade(item: dict[str, Any], book: dict[str, Any]) -> SourceTrade:
+    asset_id = str(item.get("asset") or "")
     action = TradeAction(str(item.get("side") or "BUY"))
     market_price = book["best_ask"] if action is TradeAction.BUY else book["best_bid"]
     if market_price <= 0:
-        market_price = book["mid_price"] or safe_float(item.get("price"))
+        market_price = book["mid_price"]
     return SourceTrade(
-        market_id=str(item.get("conditionId") or ""),
-        asset_id=str(item.get("asset") or ""),
+        market_id=build_market_id(item, asset_id),
+        asset_id=asset_id,
         question=sanitize_text(item.get("title")),
         outcome=sanitize_text(item.get("outcome")),
         action=action,
@@ -227,6 +289,7 @@ def build_source_trade(item: dict[str, Any], book: dict[str, Any]) -> SourceTrad
         source_usdc_size=safe_float(item.get("usdcSize")),
         timestamp=to_iso_timestamp(item.get("timestamp")),
         transaction_hash=str(item.get("transactionHash") or ""),
+        end_date=str(item.get("endDate") or ""),
     )
 
 
@@ -237,7 +300,7 @@ def build_synthetic_sell(
 ) -> SourceTrade | None:
     if holding.shares <= after_shares:
         return None
-    market_price = book["best_bid"] or book["mid_price"] or holding.price
+    market_price = book["best_bid"] or book["mid_price"]
     if market_price <= 0:
         return None
     return SourceTrade(
@@ -253,6 +316,7 @@ def build_synthetic_sell(
         transaction_hash=f"synthetic-sell:{holding.asset_id}:{holding.shares:.6f}:{after_shares:.6f}",
         source_position_before_shares=holding.shares,
         source_position_after_shares=after_shares,
+        end_date=holding.end_date,
     )
 
 
@@ -422,12 +486,14 @@ class CopyLiveManager:
             if not asset_id:
                 continue
             holdings[asset_id] = SourceHolding(
-                market_id=str(item.get("conditionId") or ""),
+                market_id=build_market_id(item, asset_id),
                 asset_id=asset_id,
                 question=sanitize_text(item.get("title")),
                 outcome=sanitize_text(item.get("outcome")),
                 shares=safe_float(item.get("size")),
                 price=safe_float(item.get("curPrice") or item.get("avgPrice")),
+                end_date=str(item.get("endDate") or ""),
+                redeemable=bool(item.get("redeemable", False)),
             )
         runtime.source_holdings = holdings
         runtime.last_poll_at = now_iso()
@@ -478,12 +544,14 @@ class CopyLiveManager:
             if not asset_id:
                 continue
             current_holdings[asset_id] = SourceHolding(
-                market_id=str(item.get("conditionId") or ""),
+                market_id=build_market_id(item, asset_id),
                 asset_id=asset_id,
                 question=sanitize_text(item.get("title")),
                 outcome=sanitize_text(item.get("outcome")),
                 shares=safe_float(item.get("size")),
                 price=safe_float(item.get("curPrice") or item.get("avgPrice")),
+                end_date=str(item.get("endDate") or ""),
+                redeemable=bool(item.get("redeemable", False)),
             )
 
         for asset_id, previous in list(runtime.source_holdings.items()):
@@ -498,6 +566,7 @@ class CopyLiveManager:
                 self._apply_trade(runtime, trade, source="positions")
 
         self._refresh_open_position_marks(runtime, book_cache)
+        self._close_finished_positions(runtime, current_holdings, book_cache)
         runtime.source_holdings = current_holdings
         runtime.updated_at = now_iso()
 
@@ -516,6 +585,62 @@ class CopyLiveManager:
             next_mark = self._mark_price_from_book(book, fallback=position.last_mark_price)
             if next_mark > 0:
                 position.last_mark_price = next_mark
+
+    def _close_finished_positions(
+        self,
+        runtime: CopyRuntime,
+        current_holdings: dict[str, SourceHolding],
+        book_cache: dict[str, dict[str, Any]],
+    ) -> None:
+        today_utc = datetime.now(timezone.utc).date()
+        close_trades: list[SourceTrade] = []
+
+        for position in list(runtime.state.positions.values()):
+            holding = current_holdings.get(position.asset_id)
+            if holding and holding.end_date and not position.end_date:
+                position.end_date = holding.end_date
+
+            known_end_date = parse_iso_date(position.end_date) or parse_question_end_date(position.question)
+            resolved = False
+            if holding and holding.redeemable:
+                resolved = True
+            elif known_end_date and today_utc > known_end_date:
+                resolved = True
+            if not resolved:
+                continue
+
+            book = self._book(position.asset_id, book_cache)
+            live_mark = self._mark_price_from_book(book, fallback=position.last_mark_price)
+            reference_price = holding.price if holding else live_mark
+            if reference_price <= 0:
+                reference_price = live_mark
+            if reference_price <= 0:
+                reference_price = position.last_mark_price
+            if not is_terminal_price(reference_price):
+                continue
+
+            settle_price = 1.0 if reference_price >= 0.99 else 0.0
+            close_trades.append(
+                SourceTrade(
+                    market_id=position.market_id,
+                    asset_id=position.asset_id,
+                    question=position.question,
+                    outcome=position.outcome,
+                    action=TradeAction.SELL,
+                    source_price=settle_price,
+                    market_price=settle_price,
+                    source_usdc_size=position.market_value,
+                    timestamp=now_iso(),
+                    transaction_hash=f"resolved-close:{position.asset_id}:{today_utc.isoformat()}",
+                    source_position_before_shares=position.shares,
+                    source_position_after_shares=0.0,
+                    end_date=position.end_date,
+                    allow_zero_price_close=True,
+                )
+            )
+
+        for trade in close_trades:
+            self._apply_trade(runtime, trade, source="resolved")
 
     @staticmethod
     def _mark_price_from_book(book: dict[str, Any], fallback: float) -> float:
@@ -754,6 +879,8 @@ class CopyLiveManager:
                 outcome=sanitize_text(item.get("outcome")),
                 shares=safe_float(item.get("shares")),
                 price=safe_float(item.get("price")),
+                end_date=str(item.get("end_date") or ""),
+                redeemable=bool(item.get("redeemable", False)),
             )
             for item in payload.get("source_holdings", [])
             if str(item.get("asset_id") or "")
@@ -787,6 +914,7 @@ class CopyLiveManager:
             avg_price=safe_float(payload.get("avg_price")),
             opened_usdc=safe_float(payload.get("cost_basis")),
             last_mark_price=safe_float(payload.get("mark_price")),
+            end_date=str(payload.get("end_date") or ""),
         )
 
     def _restore_record(self, payload: dict[str, Any]) -> ExecutionRecord:
@@ -806,6 +934,8 @@ class CopyLiveManager:
                 transaction_hash=str(trade_payload.get("transaction_hash") or ""),
                 source_position_before_shares=self._maybe_float(trade_payload.get("source_position_before_shares")),
                 source_position_after_shares=self._maybe_float(trade_payload.get("source_position_after_shares")),
+                end_date=str(trade_payload.get("end_date") or ""),
+                allow_zero_price_close=bool(trade_payload.get("allow_zero_price_close", False)),
             ),
             decision=ExecutionDecision(
                 accepted=bool(decision_payload.get("accepted", False)),

@@ -45,6 +45,8 @@ class SourceTrade:
     transaction_hash: str = ""
     source_position_before_shares: float | None = None
     source_position_after_shares: float | None = None
+    end_date: str = ""
+    allow_zero_price_close: bool = False
 
 
 @dataclass(slots=True)
@@ -57,6 +59,7 @@ class PaperPosition:
     avg_price: float
     opened_usdc: float
     last_mark_price: float
+    end_date: str = ""
 
     @property
     def market_value(self) -> float:
@@ -105,12 +108,28 @@ class PaperCopyState:
     def equity_usdc(self) -> float:
         return self.cash_usdc + sum(position.market_value for position in self.positions.values())
 
-    def market_exposure_usdc(self, market_id: str) -> float:
+    def asset_exposure_usdc(self, asset_id: str) -> float:
+        position = self.positions.get(asset_id)
+        if position is None:
+            return 0.0
+        return position.cost_basis
+
+    def market_gross_exposure_usdc(self, market_id: str) -> float:
         return sum(
             position.cost_basis
             for position in self.positions.values()
             if position.market_id == market_id
         )
+
+    def market_exposure_usdc(self, market_id: str) -> float:
+        side_exposures = [
+            position.cost_basis
+            for position in self.positions.values()
+            if position.market_id == market_id
+        ]
+        if not side_exposures:
+            return 0.0
+        return max(side_exposures)
 
     def snapshot(self) -> dict[str, Any]:
         return {
@@ -126,6 +145,7 @@ class PaperCopyState:
                     "asset_id": position.asset_id,
                     "question": position.question,
                     "outcome": position.outcome,
+                    "end_date": position.end_date,
                     "shares": round(position.shares, 6),
                     "avg_price": round(position.avg_price, 6),
                     "mark_price": round(position.last_mark_price, 6),
@@ -157,11 +177,23 @@ def run_paper_copy(
 
 
 def _execute_trade(state: PaperCopyState, trade: SourceTrade) -> ExecutionDecision:
+    if trade.market_price <= 0 and not (trade.action is TradeAction.SELL and trade.allow_zero_price_close):
+        return ExecutionDecision(
+            accepted=False,
+            action=trade.action.value,
+            reason="no_live_quote",
+            execution_price=trade.market_price,
+            total_open_exposure=round(state.open_exposure_usdc, 4),
+            market_open_exposure=round(state.market_exposure_usdc(trade.market_id), 4),
+        )
+
     price_cents = trade.market_price * 100.0
     total_open = state.open_exposure_usdc
     market_open = state.market_exposure_usdc(trade.market_id)
 
-    if not (state.settings.price_min_cents <= price_cents <= state.settings.price_max_cents):
+    if not trade.allow_zero_price_close and not (
+        state.settings.price_min_cents <= price_cents <= state.settings.price_max_cents
+    ):
         return ExecutionDecision(
             accepted=False,
             action=trade.action.value,
@@ -189,9 +221,12 @@ def _execute_trade(state: PaperCopyState, trade: SourceTrade) -> ExecutionDecisi
 def _execute_buy(state: PaperCopyState, trade: SourceTrade) -> ExecutionDecision:
     requested_usdc = _requested_copy_usdc(state.settings, trade)
     market_open = state.market_exposure_usdc(trade.market_id)
+    side_open = state.asset_exposure_usdc(trade.asset_id)
     total_open = state.open_exposure_usdc
 
-    allowed_market = max(0.0, state.settings.max_per_market_usdc - market_open)
+    # Per-market is enforced per side/outcome, not gross market notional.
+    # This allows hedge/flip behavior inside the same market without freezing the copy.
+    allowed_market = max(0.0, state.settings.max_per_market_usdc - side_open)
     allowed_total = max(0.0, state.settings.max_total_usdc - total_open)
     executable_usdc = min(requested_usdc, state.cash_usdc, allowed_market, allowed_total)
 
@@ -223,6 +258,8 @@ def _execute_buy(state: PaperCopyState, trade: SourceTrade) -> ExecutionDecision
         position.shares = new_shares
         position.opened_usdc += executable_usdc
         position.last_mark_price = trade.market_price
+        if trade.end_date and not position.end_date:
+            position.end_date = trade.end_date
     else:
         state.positions[trade.asset_id] = PaperPosition(
             market_id=trade.market_id,
@@ -233,6 +270,7 @@ def _execute_buy(state: PaperCopyState, trade: SourceTrade) -> ExecutionDecision
             avg_price=trade.market_price,
             opened_usdc=executable_usdc,
             last_mark_price=trade.market_price,
+            end_date=trade.end_date,
         )
 
     state.cash_usdc -= executable_usdc
@@ -263,14 +301,17 @@ def _execute_sell(state: PaperCopyState, trade: SourceTrade) -> ExecutionDecisio
 
     position.last_mark_price = trade.market_price
     requested_usdc = _requested_copy_usdc(state.settings, trade)
-    requested_shares = requested_usdc / trade.market_price
+    if trade.allow_zero_price_close or trade.market_price <= 0:
+        requested_shares = position.shares
+    else:
+        requested_shares = requested_usdc / trade.market_price
 
     sell_ratio = _source_sell_ratio(trade)
     if sell_ratio is not None:
         requested_shares = min(position.shares, position.shares * sell_ratio)
 
     executable_shares = min(position.shares, requested_shares)
-    if executable_shares * trade.market_price < state.settings.min_trade_usdc:
+    if not trade.allow_zero_price_close and executable_shares * trade.market_price < state.settings.min_trade_usdc:
         return ExecutionDecision(
             accepted=False,
             action=trade.action.value,
@@ -314,6 +355,8 @@ def _requested_copy_usdc(settings: CopySettings, trade: SourceTrade) -> float:
 
 
 def _slippage_ok(settings: CopySettings, trade: SourceTrade) -> bool:
+    if trade.allow_zero_price_close:
+        return True
     source = trade.source_price
     if source <= 0:
         return False
